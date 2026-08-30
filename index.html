@@ -444,6 +444,11 @@ body.final-glow .nebula{filter:blur(32px);opacity:1}
   </div>
 </div>
 
+
+<audio id="bgMusic" loop preload="auto">
+  <source src="sarki.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 const space=document.getElementById("space");
 
@@ -590,6 +595,37 @@ const moonOverlay=document.getElementById("moonOverlay");
 const videoPanel=document.getElementById("videoPanel");
 const ourVideo=document.getElementById("ourVideo");
 
+
+const bgMusic=document.getElementById("bgMusic");
+bgMusic.volume=.35;
+
+function tryStartMusic(){
+  if(bgMusic && bgMusic.paused){
+    bgMusic.play().catch(()=>{});
+  }
+}
+
+window.addEventListener("load",()=>{
+  if(bgMusic){
+    bgMusic.play().catch(()=>{});
+  }
+});
+
+document.addEventListener("click",tryStartMusic,{once:true});
+document.addEventListener("touchstart",tryStartMusic,{once:true});
+
+if(ourVideo){
+  ourVideo.addEventListener("play",()=>{
+    if(bgMusic && !bgMusic.paused) bgMusic.pause();
+  });
+
+  ourVideo.addEventListener("ended",()=>{
+    if(bgMusic) bgMusic.play().catch(()=>{});
+  });
+}
+
+
+
 document.getElementById("sunButton").addEventListener("click",()=>{
   if(!celestialUnlocked)return;
   sunOverlay.classList.add("active");
@@ -610,6 +646,7 @@ function closeMoon(){
   if(ourVideo){ourVideo.pause();ourVideo.currentTime=0;}
   videoPanel.classList.remove("active");
   document.getElementById("videoOpenBtn").style.display="";
+  if(bgMusic) bgMusic.play().catch(()=>{});
 }
 sunOverlay.addEventListener("click",e=>{if(e.target===sunOverlay)closeSun()});
 moonOverlay.addEventListener("click",e=>{if(e.target===moonOverlay)closeMoon()});
